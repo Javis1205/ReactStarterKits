@@ -1,9 +1,8 @@
-import models  from 'models/mongodb'
 import {Router} from 'express'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
 import { jwtSecret }   from 'config/constants'
-import passport from 'passport/local/mongodb'
+import passport from 'passport/local'
 import { comparePassword, encryptPassword } from 'passport/password-crypto'
 import authorize from 'passport/authorize'
 

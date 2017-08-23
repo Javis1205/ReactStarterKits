@@ -4,7 +4,5 @@ public/assets
 .DS_Store
 .idea/*
 .idea/workspace.xml
-*.log*
-mobile/ReactNotes/node_modules
-mobile/npm-debug.log
+*.log
 delivery.pem
