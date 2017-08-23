@@ -1,0 +1,10 @@
+node_modules
+public/assets
+.sass-cache
+.DS_Store
+.idea/*
+.idea/workspace.xml
+*.log*
+mobile/ReactNotes/node_modules
+mobile/npm-debug.log
+delivery.pem

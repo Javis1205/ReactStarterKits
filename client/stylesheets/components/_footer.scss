@@ -1,0 +1,20 @@
+.footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+
+  .copyright {
+    color: #7583a2;
+    font-weight: 500;
+    text-align: left;
+    margin-left: 260px;
+  }
+}
+
+.frontend .footer {
+    border:0;
+    background: transparent;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

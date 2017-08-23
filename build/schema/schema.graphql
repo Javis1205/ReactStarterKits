@@ -1,0 +1,415 @@
+input AddPostInput {
+  title: String!
+  clientMutationId: String
+}
+
+type AddPostPayload {
+  viewer: Viewer
+  postEdge: PostEdge
+  clientMutationId: String
+}
+
+type Author implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  image: String
+  introduction: String
+  description: String
+
+  # List social accounts of the user
+  social_accounts: [SocialAccount]
+}
+
+# A connection to a list of items.
+type AuthorConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [AuthorEdge]
+  totalCount: Int
+}
+
+# An edge in a connection.
+type AuthorEdge {
+  # The item at the end of the edge
+  node: Author
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+scalar Buffer
+
+scalar Date
+
+type DetailPost {
+  node: Post
+  next: Post
+  prev: Post
+}
+
+# A file uploaded via multipart/form-data
+input File {
+  # The fieldname used to POST this file.
+  fieldname: String!
+
+  # The original file name.
+  originalname: String!
+
+  # The encoding of file.
+  encoding: String
+
+  # The mimetype of file.
+  mimetype: String
+
+  # The file buffered in memory
+  buffer: Buffer!
+
+  # The size of file.
+  size: Int
+}
+
+type Item implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  target_type: itemstarget_typeEnumType
+  target_id: Int
+  sort_rank: Int
+  post_id: Int
+  created_at: String!
+  updated_at: String!
+
+  # Item text data
+  text: ItemText
+
+  # Item image data
+  image: ItemImage
+
+  # Item twitter data
+  twitter: ItemTwitter
+}
+
+type ItemImage implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  src: String
+  caption: String
+
+  # Absolute src of image item
+  full_src: String
+}
+
+input ItemImageInput {
+  id: ID
+  caption: String
+}
+
+input ItemInput {
+  id: ID
+  target_type: ID!
+  sort_rank: Int
+  text: ItemTextInput
+  twitter: ItemTwitterInput
+  image: ItemImageInput
+}
+
+enum itemstarget_typeEnumType {
+  ItemText
+  ItemImage
+  ItemTwitter
+}
+
+type ItemText implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  description: String
+}
+
+input ItemTextInput {
+  id: ID
+  description: String
+}
+
+type ItemTwitter implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  twitter_id: String
+}
+
+input ItemTwitterInput {
+  id: ID
+  twitter_id: String
+}
+
+type Mutation {
+  addPost(input: AddPostInput!): AddPostPayload
+  updatePost(input: UpdatePostInput!): UpdatePostPayload
+  removePost(input: RemovePostInput!): RemovePostPayload
+  toggleAcceptancePost(input: ToggleAcceptancePostInput!): ToggleAcceptancePostPayload
+  updateAuthor(input: UpdateAuthorInput!): UpdateAuthorPayload
+  updateItemImage(input: UpdateItemImageInput!): UpdateItemImagePayload
+}
+
+# An object with an ID
+interface Node {
+  # The id of the object.
+  id: ID!
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+type Post implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  title: String
+  lead_sentence: String
+  accepted: Boolean
+  published_at: String
+  created_at: String!
+  updated_at: String!
+
+  # Tags of the post
+  tags: [Tag]
+
+  # Items of the post
+  items: [Item]
+}
+
+# A connection to a list of items.
+type PostConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [PostEdge]
+  totalCount: Int
+}
+
+# An edge in a connection.
+type PostEdge {
+  # The item at the end of the edge
+  node: Post
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+type Project implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  title: String
+  description: String
+  caption: String
+  image: String
+  source_url: String
+  accepted: Boolean
+  created_at: String!
+  updated_at: String!
+
+  # Tags of the project
+  tags: [Tag]
+
+  # Absolute src of image
+  full_image: String
+}
+
+# A connection to a list of items.
+type ProjectConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [ProjectEdge]
+  totalCount: Int
+}
+
+# An edge in a connection.
+type ProjectEdge {
+  # The item at the end of the edge
+  node: Project
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+type Query {
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
+  viewer: Viewer
+}
+
+input RemovePostInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type RemovePostPayload {
+  viewer: Viewer
+  postId: ID
+  clientMutationId: String
+}
+
+type SocialAccount implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  author_id: Int
+  account_type: Int
+  url: String
+}
+
+input SocialAccountInput {
+  id: Int
+  url: String!
+  account_type: Int
+  author_id: Int
+}
+
+type Tag implements Node {
+  type: String
+
+  # The ID of an object
+  id: ID!
+  name: String
+  created_at: String!
+  updated_at: String!
+}
+
+input ToggleAcceptancePostInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type ToggleAcceptancePostPayload {
+  viewer: Viewer
+  clientMutationId: String
+}
+
+input UpdateAuthorInput {
+  id: ID!
+  description: String!
+  introduction: String!
+  name: String!
+  email: String!
+  avatar: File
+
+  # List social accounts input of the user
+  social_accounts: [SocialAccountInput]
+  clientMutationId: String
+}
+
+type UpdateAuthorPayload {
+  author: Author
+  clientMutationId: String
+}
+
+input UpdateItemImageInput {
+  id: ID!
+  full_src: File
+  clientMutationId: String
+}
+
+type UpdateItemImagePayload {
+  item_image: ItemImage
+  clientMutationId: String
+}
+
+input UpdatePostInput {
+  id: ID!
+  title: String!
+  lead_sentence: String!
+  published_at: Date!
+
+  # List tags input of the post
+  tags: [String!]
+
+  # List items input of the post
+  items: [ItemInput!]
+  clientMutationId: String
+}
+
+type UpdatePostPayload {
+  post: Post
+  clientMutationId: String
+}
+
+# CMS Graph
+type Viewer implements Node {
+  # The ID of an object
+  id: ID!
+
+  # A list of posts
+  posts(
+    after: String
+    first: Int
+    before: String
+    last: Int
+    offset: Int
+    order: String
+
+    # Filter post by tag-id
+    tagId: ID
+
+    # Filter post by publish, should authorize
+    accepted: Boolean
+  ): PostConnection
+
+  # Latest posts
+  latestPosts(limit: Int): [Post]
+
+  # Detail post
+  detailPost(id: ID!): DetailPost
+
+  # A list of authors
+  authors(after: String, first: Int, before: String, last: Int, offset: Int, order: String): AuthorConnection
+
+  # Detail information of the author
+  detailAuthor(userId: Int): Author
+
+  # A list of projects
+  projects(
+    after: String
+    first: Int
+    before: String
+    last: Int
+    offset: Int
+    order: String
+
+    # Filter project by tag-id
+    tagId: ID
+  ): ProjectConnection
+
+  # Latest project
+  latestProject: Project
+}

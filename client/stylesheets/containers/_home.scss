@@ -1,0 +1,52 @@
+#root{
+  height:100%;
+}
+
+.frontend {  
+  background: url(/images/landing-page.jpg) repeat-y center center;
+  background-size: cover;
+  position: fixed;   
+  width: 100%;
+  height: 100%; 
+}
+
+.frontend {
+  .vertical-center-block{    
+      left:0;      
+      width: 100%;
+  }
+
+  .text-left{
+    padding-left: 40px;
+  }
+
+  .text-right{
+    padding-right:40px;
+  }
+
+  .version{
+    font-size: 20px;
+    color:#fff;
+  }
+
+  .footer{
+    background: transparent;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 767px) {
+  
+  .frontend {
+    .text-left,.text-right{
+      text-align: center!important;
+      margin-top:20px;
+      padding-left:0;
+      padding-right:0;
+    }
+  }
+}
