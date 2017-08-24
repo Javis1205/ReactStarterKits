@@ -29,6 +29,28 @@ router.get('/', (req, res)=>{
   })
 })
 
+router.get('/list', (req, res)=>{  
+  const {page=1} = req.query  
+  const itemsPerPage = 5
+  const limit = Math.round((req.query.limit || 10) / itemsPerPage)
+  const maxLimit = Math.min(+limit, Math.round(10 / itemsPerPage))
+  const offset = (page-1) * limit  
+
+  db.execute(`SELECT COUNT(*) AS count FROM ${tableName}`).spread(([{count}]) => {
+    db.execute(`
+      SELECT data->>"$.data" as data
+      FROM ${tableName} LIMIT ${offset},${maxLimit}`
+    ).spread(rows=>{
+      const data = rows.map(row=>{
+        if(row.data)
+          row.data = JSON.parse(row.data)
+        return row.data
+      }).reduce((a, b)=>a.concat(b)).sort((a, b)=> b.updated_time.localeCompare(a.updated_time))
+      res.send({rows:data,count:count * itemsPerPage,offset})
+    }).fail(err=>res.send(err))
+  })
+})
+
 // admin update need authorize
 router.get('/crawl/:user_id', async (req, res) => {
   authorize(req)
