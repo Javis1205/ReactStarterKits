@@ -36,7 +36,7 @@ const conf = {
   },  
   externals: [
       // these modules will be included because of dynamic resolvers
-      /^(?:express|graphql|sequelize|mongoose|bindings|multer|apn|isomorphic-fetch)/i,
+      /^(?:express|mysql2|bindings|apn|isomorphic-fetch)/i,
   ],
   module: {
     rules: [
