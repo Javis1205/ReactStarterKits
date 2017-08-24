@@ -1,6 +1,6 @@
 export default {
   gitHubUrl: 'https://github.com/tubackkhoa/tkframework',
-  authorName: 'Rudicaf CMS',
+  authorName: 'Agiletech CMS',
   siteDescription: 'This website is about Facebook opensource',
-  siteName: 'tsurupin.com',
+  siteName: 'agiletech.vn',
 }

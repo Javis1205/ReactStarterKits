@@ -1,3 +1,4 @@
+
 import {Router} from 'express'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
@@ -19,6 +20,7 @@ const doLogin = (req, res, next ) => {
       return res.status(401).send('Email or password is not correct!!!')
 
     // default process more
+    console.log(user)
     req.user = user    
     // next filter
     next()    
@@ -59,27 +61,6 @@ router.post('/logout', (req, res) => {
   // logout passport to end access token immediately
   req.logout()
   
-})
-
-router.post('/update', async (req, res)=>{
-  
-  try{
-    authorize(req)
-    const {password, new_password} = req.body
-    const user = await models.accounts.findById(req.user._id)
-    console.log(user.encrypted_password, password)
-    const checkPassword = await comparePassword(password, user.encrypted_password)
-    if(!checkPassword){
-      throw new Error('password is not correct')      
-    }
-    
-    user.encrypted_password = await encryptPassword(new_password)
-    user.save()  
-    res.send({success:true})
-  } catch(ex){
-    res.status(400).end()   
-  }
-    
 })
 
 export default router

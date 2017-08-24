@@ -14,10 +14,7 @@ import App from './shared/containers/App'
 import LoginPage from './backend/containers/Account/Login'
 import HomeBackend from './backend/containers/Home'
 import AccountForm from './backend/containers/Account/Form'
-import UserPage from './backend/containers/User/Index'
-import UserFormEdit from './backend/containers/User/Form/edit'
-import NotificationPage from './backend/containers/Notification/Index'
-import NotificationFormEdit from './backend/containers/Notification/Form/edit'
+import EventPage from './backend/containers/Event/Index'
 import HomePage from './frontend/containers/Home/Index'
 
 
@@ -32,13 +29,8 @@ const Root = ({ store, history }) => (
           <Route path='/login' component={LoginPage} />                  
           <App>
             <Route exact path="/admin" component={HomeBackend} />  
-            <Route path="/admin/account/edit" component={AccountForm} />
-            <Route exact path="/admin/users" component={UserPage} />
-            <Route path="/admin/users/new" component={UserFormEdit} />
-            <Route path="/admin/users/:id/edit" component={UserFormEdit} />
-            <Route exact path="/admin/notifications" component={NotificationPage} />
-            <Route path="/admin/notifications/new" component={NotificationFormEdit} />
-            <Route path="/admin/notifications/:id/edit" component={NotificationFormEdit} />
+            <Route path="/admin/account/edit" component={AccountForm} />            
+            <Route exact path="/admin/events" component={EventPage} />
           </App>
           <Route path="*" component={NotFound} />
         </Switch>  		

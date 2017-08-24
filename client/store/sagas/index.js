@@ -1,15 +1,15 @@
 import { fork, all } from 'redux-saga/effects'
 
-import asyncAuthWatchers from './auth'
-import asyncUserFetchWatchers from './user'
-import asyncNotificationFetchWatchers from './notification'
+import asyncAuth from './auth'
+import asyncUser from './user'
+import asyncEvent from './event'
 
 // saga must be a function like generator of other functions
 const rootSaga = function* () {
   yield all([       
-    ...asyncAuthWatchers.map(watcher => fork(watcher)),    
-    ...asyncUserFetchWatchers.map(watcher => fork(watcher)),
-    ...asyncNotificationFetchWatchers.map(watcher => fork(watcher)),
+    ...asyncAuth.map(watcher => fork(watcher)),    
+    ...asyncUser.map(watcher => fork(watcher)),
+    ...asyncEvent.map(watcher => fork(watcher)),
   ])
 }
 

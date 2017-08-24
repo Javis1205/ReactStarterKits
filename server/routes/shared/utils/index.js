@@ -1,34 +1,39 @@
 import authorize from 'passport/authorize'
 import StatusCode from 'routes/status'
+import db from 'data/mysql'
 
-export const getPagingRouter = (model, attributes=[], include=[], where, order) => (req, res)=> {
+export const getPagingRouter = (tableName, fields='*', where, order) => (req, res)=> {
   const {page=1, limit=10} = req.query  
   const maxLimit = Math.min(+limit, 10)
-
   const offset = (page-1) * limit
-  const options = {
-    limit: maxLimit,
-    offset,
-    attributes,
-    include
-  }
-  
+  let orderStr = order ? ('ORDER BY ' + order) : ''
+  let whereStr = ''
   if(where){
-    options.where = typeof where === 'function' ? where(req) : where
-  }
-  if(order){
-    options.order = typeof order === 'function' ? order(req) : order
+    whereStr = 'WHERE ' + (Object.keys(where).map(key=>key+'=:'+key).join(' AND ') || 'true')
   }
 
+  db.execute(`SELECT COUNT(*) AS count FROM ${tableName} ${whereStr}`, where).spread(([{count}]) => {
+    db.execute(`
+      SELECT ${fields}
+      FROM ${tableName} ${whereStr} ${orderStr} LIMIT ${offset},${maxLimit}`, where
+    ).spread(rows=>res.send({rows,count,offset})).fail(err=>res.send(err))
+  }).fail(err=>res.send(err))    
 }
 
-export const getDetailRouter = (model, attributes, include=[]) => (req, res) => {
+export const getDetailRouter = (tableName, fields='*') => (req, res) => {
   // tag is public
   const {id} = req.params
-  const options = include.length > 0 ? {attributes, include} : {attributes}
-  
+  db.execute(`
+    SELECT ${fields}
+    FROM ${tableName} WHERE id=${id} LIMIT 1`
+  ).spread(([row])=>res.send(row)).fail(err=>res.send(err))    
 }
 
-export const getDeleteRouter = (model) => (req, res) => {
+export const getDeleteRouter = (tableName) => (req, res) => {
+  authorize(req)
   const {id} = req.params
+  db.execute(`
+    DELETE
+    FROM ${tableName} WHERE id=${id}`
+  ).spread(rows=>res.send(rows)).fail(err=>res.send(err))   
 }

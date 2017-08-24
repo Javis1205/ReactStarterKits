@@ -97,20 +97,15 @@ class AppNavDrawer extends Component {
           <ListItem            
             leftIcon={<ActionDashboard color={styles.menu.color}/>}
             innerDivStyle={styles.menu}
-            primaryText="Quản lý"
+            primaryText="Management"
             initiallyOpen={true}
             primaryTogglesNestedList={true}
-            nestedItems={[
+            nestedItems={[              
               <ListItem 
                 innerDivStyle={styles.subMenu} 
-                primaryText="QL Người Dùng" 
-                value="users"
-                containerElement={<Link to="/admin/users" />} />,
-              <ListItem 
-                innerDivStyle={styles.subMenu} 
-                primaryText="QL Thông Báo" 
-                value="notifications"
-                containerElement={<Link to="/admin/notifications" />} />,
+                primaryText="Event Management" 
+                value="events"
+                containerElement={<Link to="/admin/events" />} />,
             ]}
           />          
         </SelectableList>

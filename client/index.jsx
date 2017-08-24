@@ -54,17 +54,5 @@ configureStore(store => {
 	render(<h1 style={{color:'red'}}>{err}</h1>, rootElement)
 })
 
-// hot fix for better output	
-console.error = (logError => (msg, ...args) => {
-	// not React route changed
-  if(msg.indexOf('You cannot change <Router routes>;') === -1){
-  	if(msg.indexOf('Warning: Unknown prop') === 0){
-  		console.warn(msg)
-  	} else {
-  		logError.call(console, msg, ...args)	      	      	    	  
-  	}
-  } 
-      
-})(console.error) 
  
 

@@ -6,6 +6,7 @@ import {
   markRequestSuccess,
   markRequestCancelled,
   markRequestFailed,
+  invokeCallback,
   setToast,
   forwardTo,
 } from 'store/actions/common'
@@ -13,27 +14,36 @@ import {
 import {
   saveRefreshToken,
   setAuthState,     
-  removeLoggedUser, 
+  removeLoggedUser,  
 } from 'store/actions/auth'
 
-
 import api from 'store/api'
-
 import {  
   API_TIMEOUT
-} from 'config/api'
+} from 'store/constants/api'
 
 // create saga here
 // convenient way: [] instead of polymorph, such as item is not array then [item]
 // because later changes to code will be so easy, just add new row
 export const createRequestSaga = ({request, key, start, stop, success, failure, cancelled, timeout=API_TIMEOUT, cancel}) => {
-
+  
   // when we dispatch a function, redux-thunk will give it a dispatch
   // while redux-saga will give it an action instead, good for testing
   // we may not needs this if we use redux-saga, of course we can use both
   return function* (action) {    
     // default is empty
-    const args = action.args || []
+    let args = action.args || []
+    // check to see if we have success callback that pass as a param, so that it will be callback from where it was born
+    // with this way we can make something like cleaning the messages    
+    let callback = typeof args[args.length-1] === 'function' ? args[args.length-1] : null
+    if(callback){
+      args = args.slice(0, -1)
+    }
+    // error first callback
+    let ret = null
+    let err = null
+
+    // store into redux
     const requestKey = (typeof key === 'function') ? key(...args) : key
     // for key, we render unique key using action.args
     // but for actionCreator when callback, we should pass the whole action
@@ -74,15 +84,29 @@ export const createRequestSaga = ({request, key, start, stop, success, failure, 
         // mark cancelled request
         yield put(markRequestCancelled(cancelRet, requestKey))
       } else {
+
+        // throw unthorized response
+        if(data.code === 1903){
+          throw {
+            status: 401,
+            message: data.msg,
+          }
+        }
+
         // callback on success
         if(success) for(let actionCreator of success){          
           yield put(actionCreator(data, action))
-        }        
+        }                
+        // finally mark the request success
         yield put(markRequestSuccess(requestKey))
+
+        // assign data, for cancel both ret and err is null
+        ret = data
+
       }            
       
     } catch (reason) {
-
+      // unauthorized
       if(reason.status === 401){
         // try refresh token
         const token = action.args[0]
@@ -98,8 +122,8 @@ export const createRequestSaga = ({request, key, start, stop, success, failure, 
         } else {
           // call logout user because we do not have refresh token
           yield put(removeLoggedUser())
-          yield put(setAuthState(false))
-          yield put(forwardTo('/admin'))
+          yield put(setAuthState(false))       
+          yield put(forwardTo('/admin'))          
         }
       }
       // anyway, we should treat this as error to log
@@ -107,9 +131,19 @@ export const createRequestSaga = ({request, key, start, stop, success, failure, 
         yield put(actionCreator(reason, action))
       }        
       yield put(markRequestFailed(reason, requestKey))
+
+      // mark error
+      err = reason      
+      
     } finally {
       if(stop) for(let actionCreator of stop){          
-        yield put(actionCreator(reason, action))
+        yield put(actionCreator(ret, action))
+      } 
+      // check if the last param is action, should call it as actionCreator
+      // from where it is called, we can access action[type and args], 
+      // so we will use it with first error callback style
+      if(callback) {
+        yield put(invokeCallback(callback, err, ret))        
       } 
     }
   }
