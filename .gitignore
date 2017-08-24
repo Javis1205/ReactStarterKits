@@ -6,3 +6,4 @@ public/assets
 .idea/workspace.xml
 *.log
 delivery.pem
+config/database.js
