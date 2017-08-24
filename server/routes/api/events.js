@@ -30,24 +30,24 @@ router.get('/', (req, res)=>{
 })
 
 router.get('/list', (req, res)=>{  
-  const {page=1} = req.query  
+  // const {page=1} = req.query  
   const itemsPerPage = 5
-  const limit = Math.round((req.query.limit || 10) / itemsPerPage)
-  const maxLimit = Math.min(+limit, Math.round(10 / itemsPerPage))
-  const offset = (page-1) * limit  
+  // const limit = Math.round((req.query.limit || 10) / itemsPerPage)
+  // const maxLimit = Math.min(+limit, Math.round(10 / itemsPerPage))
+  // const offset = (page-1) * limit  
 
-  db.execute(`SELECT COUNT(*) AS count FROM ${tableName}`).spread(([{count}]) => {
+  // db.execute(`SELECT COUNT(*) AS count FROM ${tableName}`).spread(([{count}]) => {
     db.execute(`
-      SELECT data->>"$.data" as data
-      FROM ${tableName} LIMIT ${offset},${maxLimit}`
+      SELECT user_id, data->>"$.data" as data
+      FROM ${tableName}`
     ).spread(rows=>{
       const data = rows.map(row=>{
         if(row.data)
-          row.data = JSON.parse(row.data)
+          row.data = JSON.parse(row.data).map(rowItem=>({...rowItem, full_name: row.user_id}))
         return row.data
       }).reduce((a, b)=>a.concat(b)).sort((a, b)=> b.updated_time.localeCompare(a.updated_time))
-      res.send({rows:data,count:count * itemsPerPage,offset})
-    }).fail(err=>res.send(err))
+      res.send({rows:data,count:rows.length * itemsPerPage,offset:0})
+    // }).fail(err=>res.send(err))
   })
 })
 
